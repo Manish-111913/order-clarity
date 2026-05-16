@@ -1,5 +1,5 @@
 import { useEffect, useState } from "react";
-import { Check, X } from "lucide-react";
+import { ArrowRight, Check, X } from "lucide-react";
 import { cn } from "@/lib/utils";
 
 export type KotStatus = "PENDING" | "PREPARING" | "SERVED";
@@ -18,10 +18,8 @@ export interface KotItem {
 export interface KotCardProps {
   tableNo: string;
   kotId: string;
-  /** seconds elapsed since KOT was fired */
   elapsedSeconds: number;
   items: KotItem[];
-  allergyAlert?: string;
   staff?: string;
   station?: string;
   status: KotStatus;
@@ -47,12 +45,17 @@ function timerTone(sec: number) {
   return "critical";
 }
 
+const STAGES: { key: KotStatus; label: string }[] = [
+  { key: "PENDING", label: "Queued" },
+  { key: "PREPARING", label: "Cooking" },
+  { key: "SERVED", label: "Ready" },
+];
+
 export function KotCard({
   tableNo,
   kotId,
   elapsedSeconds,
   items,
-  allergyAlert,
   staff,
   station,
   status,
@@ -61,6 +64,11 @@ export function KotCard({
   onDismiss,
 }: KotCardProps) {
   const tone = timerTone(elapsedSeconds);
+  const stageIndex = STAGES.findIndex((s) => s.key === status);
+
+  const advance = status === "PENDING" ? onStart : status === "PREPARING" ? onReady : undefined;
+  const ctaLabel =
+    status === "PENDING" ? "Start Cooking" : status === "PREPARING" ? "Mark Ready" : "Served";
 
   return (
     <article className="w-full max-w-md rounded-2xl bg-kot-card shadow-kot ring-1 ring-kot-border overflow-hidden font-mono">
@@ -80,33 +88,33 @@ export function KotCard({
           </span>
         </div>
 
-        <div className="flex flex-col items-end leading-none">
-          <span
-            className={cn(
-              "text-2xl font-bold tabular-nums",
-              tone === "neutral" && "text-kot-muted",
-              tone === "warning" && "text-kot-warning",
-              tone === "critical" && "text-kot-critical animate-pulse",
-            )}
+        <div className="flex items-start gap-3">
+          <div className="flex flex-col items-end leading-none">
+            <span
+              className={cn(
+                "text-2xl font-bold tabular-nums",
+                tone === "neutral" && "text-kot-muted",
+                tone === "warning" && "text-kot-warning",
+                tone === "critical" && "text-kot-critical animate-pulse",
+              )}
+            >
+              {formatTime(elapsedSeconds)}
+            </span>
+            <span className="mt-1 text-[10px] uppercase tracking-widest text-kot-muted">
+              {status === "PENDING" && "Pending"}
+              {status === "PREPARING" && "Preparing"}
+              {status === "SERVED" && "Served"}
+            </span>
+          </div>
+          <button
+            onClick={onDismiss}
+            aria-label="Dismiss ticket"
+            className="mt-1 flex h-6 w-6 items-center justify-center rounded-full text-kot-muted/70 transition hover:bg-kot-critical/10 hover:text-kot-critical"
           >
-            {formatTime(elapsedSeconds)}
-          </span>
-          <span className="mt-1 text-[10px] uppercase tracking-widest text-kot-muted">
-            {status === "PENDING" && "Status: Pending"}
-            {status === "PREPARING" && "Status: Preparing"}
-            {status === "SERVED" && "Status: Served"}
-          </span>
+            <X className="h-3.5 w-3.5" strokeWidth={2.5} />
+          </button>
         </div>
       </header>
-
-      {/* Allergy alert */}
-      {allergyAlert && (
-        <div className="mx-5 mt-4 rounded-md border border-kot-critical/40 bg-kot-critical/10 px-3 py-2">
-          <p className="text-xs font-bold uppercase tracking-wider text-kot-critical">
-            ⚠ Allergy Alert: {allergyAlert}
-          </p>
-        </div>
-      )}
 
       {/* Items matrix */}
       <section className="px-5 py-4">
@@ -163,7 +171,7 @@ export function KotCard({
 
       {/* Meta */}
       {(staff || station) && (
-        <div className="px-5 pb-3 flex items-center justify-between text-[11px] text-kot-muted border-t border-dashed border-kot-border pt-3">
+        <div className="px-5 pb-3 flex items-center justify-between text-[11px] text-kot-muted">
           {staff && (
             <span>
               <span className="uppercase tracking-wider">Handler:</span>{" "}
@@ -179,44 +187,92 @@ export function KotCard({
         </div>
       )}
 
-      {/* Footer actions */}
-      <footer className="flex items-stretch gap-2 px-5 pb-5 pt-1">
-        <button
-          onClick={onDismiss}
-          aria-label="Reject or dismiss"
-          className="flex h-12 w-12 shrink-0 items-center justify-center rounded-lg border border-kot-border bg-kot-card text-kot-critical transition hover:bg-kot-critical/10"
-        >
-          <X className="h-5 w-5" strokeWidth={2.5} />
-        </button>
+      {/* NEW Footer concept: perforated ticket stub with stage track + advance CTA */}
+      <div className="relative">
+        {/* Perforation row with notches */}
+        <div className="relative">
+          <div
+            aria-hidden
+            className="absolute -left-2 top-1/2 h-4 w-4 -translate-y-1/2 rounded-full bg-kot-bg"
+          />
+          <div
+            aria-hidden
+            className="absolute -right-2 top-1/2 h-4 w-4 -translate-y-1/2 rounded-full bg-kot-bg"
+          />
+          <div className="mx-5 border-t border-dashed border-kot-border" />
+        </div>
 
-        {status === "PENDING" && (
+        <footer className="px-5 pt-4 pb-5 bg-kot-stub">
+          {/* Stage track */}
+          <ol className="flex items-center gap-2 mb-4" aria-label="Order stage">
+            {STAGES.map((stage, i) => {
+              const isComplete = i < stageIndex;
+              const isCurrent = i === stageIndex;
+              return (
+                <li key={stage.key} className="flex flex-1 items-center gap-2">
+                  <div className="flex items-center gap-2">
+                    <span
+                      className={cn(
+                        "flex h-5 w-5 items-center justify-center rounded-full text-[10px] font-bold transition",
+                        isComplete && "bg-kot-ready text-white",
+                        isCurrent && "bg-kot-ink text-kot-card ring-2 ring-kot-ink/20",
+                        !isComplete && !isCurrent && "bg-kot-border text-kot-muted",
+                      )}
+                    >
+                      {isComplete ? <Check className="h-3 w-3" strokeWidth={3} /> : i + 1}
+                    </span>
+                    <span
+                      className={cn(
+                        "text-[10px] uppercase tracking-widest",
+                        isCurrent ? "text-kot-ink font-bold" : "text-kot-muted",
+                      )}
+                    >
+                      {stage.label}
+                    </span>
+                  </div>
+                  {i < STAGES.length - 1 && (
+                    <span
+                      className={cn(
+                        "h-px flex-1",
+                        i < stageIndex ? "bg-kot-ready" : "bg-kot-border",
+                      )}
+                    />
+                  )}
+                </li>
+              );
+            })}
+          </ol>
+
+          {/* Advance CTA — full-width pill with arrow that slides on hover */}
           <button
-            onClick={onStart}
-            className="flex-1 rounded-lg bg-kot-action text-kot-action-foreground font-semibold uppercase tracking-wider text-sm transition hover:brightness-95 active:brightness-90"
+            onClick={advance}
+            disabled={!advance}
+            className={cn(
+              "group relative flex w-full items-center justify-between overflow-hidden rounded-full px-5 py-3 text-sm font-bold uppercase tracking-widest transition",
+              status === "PENDING" &&
+                "bg-kot-ink text-kot-card hover:bg-kot-ink/90",
+              status === "PREPARING" &&
+                "bg-kot-ready text-white hover:brightness-110",
+              status === "SERVED" &&
+                "bg-kot-ready/15 text-kot-ready cursor-default",
+            )}
           >
-            Start Preparation
+            <span className="flex items-center gap-2">
+              {status === "SERVED" && <Check className="h-4 w-4" strokeWidth={3} />}
+              {ctaLabel}
+            </span>
+            {status !== "SERVED" && (
+              <span className="flex h-7 w-7 items-center justify-center rounded-full bg-white/15 transition-transform group-hover:translate-x-1">
+                <ArrowRight className="h-4 w-4" strokeWidth={2.5} />
+              </span>
+            )}
           </button>
-        )}
-        {status === "PREPARING" && (
-          <button
-            onClick={onReady}
-            className="flex-1 inline-flex items-center justify-center gap-2 rounded-lg bg-kot-ready text-white font-semibold uppercase tracking-wider text-sm transition hover:brightness-95 active:brightness-90"
-          >
-            <Check className="h-5 w-5" strokeWidth={3} />
-            Mark as Ready
-          </button>
-        )}
-        {status === "SERVED" && (
-          <div className="flex-1 inline-flex items-center justify-center rounded-lg bg-kot-ready/10 text-kot-ready font-semibold uppercase tracking-wider text-sm">
-            ✓ Served
-          </div>
-        )}
-      </footer>
+        </footer>
+      </div>
     </article>
   );
 }
 
-/** Hook to drive an auto-ticking elapsed counter from an ISO start time. */
 export function useElapsedSeconds(startISO: string) {
   const [now, setNow] = useState(() => Date.now());
   useEffect(() => {

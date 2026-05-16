@@ -157,7 +157,7 @@ function TickingCard({
       kotId={ticket.kotId}
       elapsedSeconds={elapsed}
       items={ticket.items}
-      allergyAlert={ticket.allergyAlert}
+      
       staff={ticket.staff}
       station={ticket.station}
       status={ticket.status}
