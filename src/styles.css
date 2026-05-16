@@ -146,6 +146,7 @@
   --kot-action: oklch(0.88 0.07 90);           /* tan button (matches img) */
   --kot-action-foreground: oklch(0.35 0.03 60);
   --kot-ready: oklch(0.55 0.16 145);
+  --kot-stub: oklch(0.94 0.05 92);
 }
 
 @theme inline {
