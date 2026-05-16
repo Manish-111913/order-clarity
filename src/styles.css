@@ -162,6 +162,7 @@
   --color-kot-action: var(--kot-action);
   --color-kot-action-foreground: var(--kot-action-foreground);
   --color-kot-ready: var(--kot-ready);
+  --color-kot-stub: var(--kot-stub);
   --shadow-kot: 0 10px 30px -12px oklch(0.4 0.1 70 / 0.35);
 }
 
