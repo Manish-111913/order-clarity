@@ -132,6 +132,38 @@
   --sidebar-ring: oklch(0.551 0.027 264.364);
 }
 
+/* KOT (Kitchen Order Ticket) design tokens — warm cream theme */
+:root {
+  --kot-bg: oklch(0.88 0.13 88);              /* page amber */
+  --kot-card: oklch(0.965 0.04 92);            /* cream card */
+  --kot-header: oklch(0.99 0.01 90);           /* near-white header */
+  --kot-border: oklch(0.85 0.04 85);
+  --kot-ink: oklch(0.22 0.02 60);              /* near-black ink */
+  --kot-muted: oklch(0.55 0.02 60);
+  --kot-warning: oklch(0.72 0.17 65);          /* amber */
+  --kot-critical: oklch(0.58 0.22 27);         /* red */
+  --kot-add: oklch(0.5 0.13 145);              /* green */
+  --kot-action: oklch(0.88 0.07 90);           /* tan button (matches img) */
+  --kot-action-foreground: oklch(0.35 0.03 60);
+  --kot-ready: oklch(0.55 0.16 145);
+}
+
+@theme inline {
+  --color-kot-bg: var(--kot-bg);
+  --color-kot-card: var(--kot-card);
+  --color-kot-header: var(--kot-header);
+  --color-kot-border: var(--kot-border);
+  --color-kot-ink: var(--kot-ink);
+  --color-kot-muted: var(--kot-muted);
+  --color-kot-warning: var(--kot-warning);
+  --color-kot-critical: var(--kot-critical);
+  --color-kot-add: var(--kot-add);
+  --color-kot-action: var(--kot-action);
+  --color-kot-action-foreground: var(--kot-action-foreground);
+  --color-kot-ready: var(--kot-ready);
+  --shadow-kot: 0 10px 30px -12px oklch(0.4 0.1 70 / 0.35);
+}
+
 @layer base {
   * {
     border-color: var(--color-border);
