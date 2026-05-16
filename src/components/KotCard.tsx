@@ -72,93 +72,47 @@ export function KotCard({
 
   return (
     <article className="w-full max-w-md rounded-2xl bg-kot-card shadow-kot ring-1 ring-kot-border overflow-hidden font-mono">
-      {/* Header — boarding-pass strip */}
-      <header className="relative flex items-stretch bg-kot-header">
-        {/* Dismiss in absolute top-right corner */}
-        <button
-          onClick={onDismiss}
-          aria-label="Dismiss ticket"
-          className="absolute right-2 top-2 z-10 flex h-6 w-6 items-center justify-center rounded-full text-kot-muted/60 transition hover:bg-kot-critical/10 hover:text-kot-critical"
-        >
-          <X className="h-3.5 w-3.5" strokeWidth={2.5} />
-        </button>
-
-        {/* Left: filled table stamp */}
-        <div className="flex flex-col items-center justify-center bg-kot-ink px-5 py-4 text-kot-card min-w-[88px]">
-          <span className="text-[9px] uppercase tracking-[0.2em] text-kot-card/60">
-            Table
-          </span>
-          <span className="text-3xl font-black leading-none tracking-tight mt-1">
+      {/* Header */}
+      <header className="flex items-stretch justify-between gap-4 px-5 py-4 border-b border-dashed border-kot-border bg-kot-header">
+        <div className="flex items-baseline gap-3">
+          <span className="text-3xl font-bold tracking-tight text-kot-ink leading-none">
             {tableNo}
           </span>
+          <span className="text-xs uppercase tracking-widest text-kot-muted">
+            Table
+          </span>
+          <span className="mx-2 h-6 w-px bg-kot-border" />
+          <span className="text-sm font-semibold text-kot-ink">{kotId}</span>
+          <span className="text-[10px] uppercase tracking-widest text-kot-muted">
+            KOT
+          </span>
         </div>
 
-        {/* Middle: KOT id + status pill stacked */}
-        <div className="flex flex-1 flex-col justify-center gap-1.5 px-4 py-3">
-          <div className="flex items-baseline gap-2">
-            <span className="text-[9px] uppercase tracking-[0.2em] text-kot-muted">
-              KOT
-            </span>
-            <span className="text-lg font-bold text-kot-ink leading-none">
-              {kotId}
-            </span>
-          </div>
-          <span
-            className={cn(
-              "inline-flex w-fit items-center gap-1.5 rounded-full border px-2 py-0.5 text-[9px] font-bold uppercase tracking-[0.2em]",
-              status === "PENDING" && "border-kot-muted/40 text-kot-muted bg-kot-card",
-              status === "PREPARING" && "border-kot-warning/50 text-kot-warning bg-kot-warning/10",
-              status === "SERVED" && "border-kot-ready/50 text-kot-ready bg-kot-ready/10",
-            )}
-          >
+        <div className="flex items-start gap-3">
+          <div className="flex flex-col items-end leading-none">
             <span
               className={cn(
-                "h-1.5 w-1.5 rounded-full",
-                status === "PENDING" && "bg-kot-muted",
-                status === "PREPARING" && "bg-kot-warning animate-pulse",
-                status === "SERVED" && "bg-kot-ready",
+                "text-2xl font-bold tabular-nums",
+                tone === "neutral" && "text-kot-muted",
+                tone === "warning" && "text-kot-warning",
+                tone === "critical" && "text-kot-critical animate-pulse",
               )}
-            />
-            {status}
-          </span>
-        </div>
-
-        {/* Right: digital timer readout with elapsed bar */}
-        <div className="flex flex-col items-end justify-center border-l border-dashed border-kot-border px-5 py-3 pr-10">
-          <span className="text-[9px] uppercase tracking-[0.2em] text-kot-muted">
-            Elapsed
-          </span>
-          <span
-            className={cn(
-              "text-2xl font-black tabular-nums leading-none mt-1",
-              tone === "neutral" && "text-kot-ink",
-              tone === "warning" && "text-kot-warning",
-              tone === "critical" && "text-kot-critical animate-pulse",
-            )}
-          >
-            {formatTime(elapsedSeconds)}
-          </span>
-          <div className="mt-2 flex gap-0.5" aria-hidden>
-            {Array.from({ length: 5 }).map((_, i) => {
-              const filledCount = tone === "critical" ? 5 : tone === "warning" ? 4 : Math.min(3, Math.floor(elapsedSeconds / 120) + 1);
-              const active = i < filledCount;
-              return (
-                <span
-                  key={i}
-                  className={cn(
-                    "h-1 w-3 rounded-full",
-                    active
-                      ? tone === "critical"
-                        ? "bg-kot-critical"
-                        : tone === "warning"
-                          ? "bg-kot-warning"
-                          : "bg-kot-ink"
-                      : "bg-kot-border",
-                  )}
-                />
-              );
-            })}
+            >
+              {formatTime(elapsedSeconds)}
+            </span>
+            <span className="mt-1 text-[10px] uppercase tracking-widest text-kot-muted">
+              {status === "PENDING" && "Pending"}
+              {status === "PREPARING" && "Preparing"}
+              {status === "SERVED" && "Served"}
+            </span>
           </div>
+          <button
+            onClick={onDismiss}
+            aria-label="Dismiss ticket"
+            className="mt-1 flex h-6 w-6 items-center justify-center rounded-full text-kot-muted/70 transition hover:bg-kot-critical/10 hover:text-kot-critical"
+          >
+            <X className="h-3.5 w-3.5" strokeWidth={2.5} />
+          </button>
         </div>
       </header>
 
