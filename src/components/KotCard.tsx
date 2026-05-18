@@ -196,45 +196,74 @@ export function KotCard({
       <div>
         <div className="mx-5 border-t border-dashed border-kot-border" />
         <footer className="px-5 pt-4 pb-5">
-          {/* Stage track */}
-          <ol className="flex items-center gap-2 mb-4" aria-label="Order stage">
-            {STAGES.map((stage, i) => {
-              const isComplete = i < stageIndex;
-              const isCurrent = i === stageIndex;
-              return (
-                <li key={stage.key} className="flex flex-1 items-center gap-2">
-                  <div className="flex items-center gap-2">
-                    <span
-                      className={cn(
-                        "flex h-5 w-5 items-center justify-center rounded-full text-[10px] font-bold transition",
-                        isComplete && "bg-kot-ready text-white",
-                        isCurrent && "bg-kot-ink text-kot-card ring-2 ring-kot-ink/20",
-                        !isComplete && !isCurrent && "bg-kot-border text-kot-muted",
-                      )}
-                    >
-                      {isComplete ? <Check className="h-3 w-3" strokeWidth={3} /> : i + 1}
-                    </span>
-                    <span
-                      className={cn(
-                        "text-[10px] uppercase tracking-widest",
-                        isCurrent ? "text-kot-ink font-bold" : "text-kot-muted",
-                      )}
-                    >
-                      {stage.label}
-                    </span>
-                  </div>
-                  {i < STAGES.length - 1 && (
-                    <span
-                      className={cn(
-                        "h-px flex-1",
-                        i < stageIndex ? "bg-kot-ready" : "bg-kot-border",
-                      )}
-                    />
+          {/* Stage track — just Queued ⇢ Ready, animated */}
+          {(() => {
+            const progress =
+              status === "PENDING" ? 0 : status === "PREPARING" ? 50 : 100;
+            const queuedDone = status !== "PENDING";
+            const readyDone = status === "SERVED";
+            return (
+              <div className="mb-4 flex items-center gap-3" aria-label="Order stage">
+                {/* Queued */}
+                <div className="flex items-center gap-2">
+                  <span
+                    className={cn(
+                      "flex h-5 w-5 items-center justify-center rounded-full text-[10px] font-bold transition-all duration-500",
+                      queuedDone
+                        ? "bg-kot-ready text-white"
+                        : "bg-kot-ink text-kot-card ring-2 ring-kot-ink/20",
+                    )}
+                  >
+                    {queuedDone ? <Check className="h-3 w-3" strokeWidth={3} /> : 1}
+                  </span>
+                  <span
+                    className={cn(
+                      "text-[10px] uppercase tracking-widest transition-colors",
+                      !queuedDone ? "text-kot-ink font-bold" : "text-kot-muted",
+                    )}
+                  >
+                    Queued
+                  </span>
+                </div>
+
+                {/* Animated connector */}
+                <div className="relative h-px flex-1 bg-kot-border overflow-hidden">
+                  <div
+                    className="absolute inset-y-0 left-0 bg-kot-ready transition-all duration-700 ease-out"
+                    style={{ width: `${progress}%` }}
+                  />
+                  {status === "PREPARING" && (
+                    <div className="absolute inset-y-0 left-0 h-px w-full bg-gradient-to-r from-transparent via-kot-ready to-transparent animate-pulse" />
                   )}
-                </li>
-              );
-            })}
-          </ol>
+                </div>
+
+                {/* Ready */}
+                <div className="flex items-center gap-2">
+                  <span
+                    className={cn(
+                      "flex h-5 w-5 items-center justify-center rounded-full text-[10px] font-bold transition-all duration-500",
+                      readyDone && "bg-kot-ready text-white",
+                      status === "PREPARING" &&
+                        "bg-kot-ink text-kot-card ring-2 ring-kot-ink/20 animate-pulse",
+                      status === "PENDING" && "bg-kot-border text-kot-muted",
+                    )}
+                  >
+                    {readyDone ? <Check className="h-3 w-3" strokeWidth={3} /> : 2}
+                  </span>
+                  <span
+                    className={cn(
+                      "text-[10px] uppercase tracking-widest transition-colors",
+                      status === "PREPARING" && "text-kot-ink font-bold",
+                      readyDone && "text-kot-ready font-bold",
+                      status === "PENDING" && "text-kot-muted",
+                    )}
+                  >
+                    Ready
+                  </span>
+                </div>
+              </div>
+            );
+          })()}
 
           {/* Advance CTA — full-width pill with arrow that slides on hover */}
           <button
