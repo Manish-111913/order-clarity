@@ -72,48 +72,66 @@ export function KotCard({
 
   return (
     <article className="w-full max-w-md rounded-2xl bg-kot-card shadow-kot ring-1 ring-kot-border overflow-hidden font-mono">
-      {/* Header */}
-      <header className="flex items-stretch justify-between gap-4 px-5 py-4 border-b border-dashed border-kot-border bg-kot-header">
-        <div className="flex items-baseline gap-3">
-          <span className="text-3xl font-bold tracking-tight text-kot-ink leading-none">
-            {tableNo}
-          </span>
-          <span className="text-xs uppercase tracking-widest text-kot-muted">
-            Table
-          </span>
-          <span className="mx-2 h-6 w-px bg-kot-border" />
-          <span className="text-sm font-semibold text-kot-ink">{kotId}</span>
-          <span className="text-[10px] uppercase tracking-widest text-kot-muted">
-            KOT
-          </span>
-        </div>
+      {/* Header — minimal: status dot · table · spacer · timer · dismiss */}
+      <header className="relative px-5 pt-5 pb-4">
+        <div className="flex items-center gap-3">
+          {/* status dot */}
+          <span
+            className={cn(
+              "h-2 w-2 shrink-0 rounded-full",
+              status === "PENDING" && "bg-kot-muted",
+              status === "PREPARING" && "bg-kot-warning animate-pulse",
+              status === "SERVED" && "bg-kot-ready",
+            )}
+            aria-hidden
+          />
 
-        <div className="flex items-start gap-3">
-          <div className="flex flex-col items-end leading-none">
-            <span
-              className={cn(
-                "text-2xl font-bold tabular-nums",
-                tone === "neutral" && "text-kot-muted",
-                tone === "warning" && "text-kot-warning",
-                tone === "critical" && "text-kot-critical animate-pulse",
-              )}
-            >
-              {formatTime(elapsedSeconds)}
-            </span>
-            <span className="mt-1 text-[10px] uppercase tracking-widest text-kot-muted">
-              {status === "PENDING" && "Pending"}
-              {status === "PREPARING" && "Preparing"}
-              {status === "SERVED" && "Served"}
-            </span>
-          </div>
+          {/* table — the hero */}
+          <h2 className="text-4xl font-bold leading-none tracking-tight text-kot-ink">
+            {tableNo}
+          </h2>
+
+          {/* kot id — small, secondary */}
+          <span className="self-end pb-0.5 text-xs font-medium tracking-wide text-kot-muted">
+            {kotId}
+          </span>
+
+          {/* timer pushed right */}
+          <span
+            className={cn(
+              "ml-auto text-2xl font-semibold tabular-nums leading-none",
+              tone === "neutral" && "text-kot-ink/70",
+              tone === "warning" && "text-kot-warning",
+              tone === "critical" && "text-kot-critical animate-pulse",
+            )}
+          >
+            {formatTime(elapsedSeconds)}
+          </span>
+
           <button
             onClick={onDismiss}
             aria-label="Dismiss ticket"
-            className="mt-1 flex h-6 w-6 items-center justify-center rounded-full text-kot-muted/70 transition hover:bg-kot-critical/10 hover:text-kot-critical"
+            className="flex h-6 w-6 items-center justify-center rounded-full text-kot-muted/60 transition hover:bg-kot-critical/10 hover:text-kot-critical"
           >
             <X className="h-3.5 w-3.5" strokeWidth={2.5} />
           </button>
         </div>
+
+        {/* sub-row: tiny labels aligned under their values */}
+        <div className="mt-2 flex items-center gap-3 text-[10px] uppercase tracking-[0.2em] text-kot-muted">
+          <span className="w-2" aria-hidden />
+          <span>Table</span>
+          <span className="text-kot-border">/</span>
+          <span>
+            {status === "PENDING" && "Awaiting"}
+            {status === "PREPARING" && "In progress"}
+            {status === "SERVED" && "Served"}
+          </span>
+          <span className="ml-auto mr-9">Elapsed</span>
+        </div>
+
+        {/* hairline divider */}
+        <div className="mt-4 h-px bg-kot-border" />
       </header>
 
       {/* Items matrix */}
@@ -187,22 +205,10 @@ export function KotCard({
         </div>
       )}
 
-      {/* NEW Footer concept: perforated ticket stub with stage track + advance CTA */}
-      <div className="relative">
-        {/* Perforation row with notches */}
-        <div className="relative">
-          <div
-            aria-hidden
-            className="absolute -left-2 top-1/2 h-4 w-4 -translate-y-1/2 rounded-full bg-kot-bg"
-          />
-          <div
-            aria-hidden
-            className="absolute -right-2 top-1/2 h-4 w-4 -translate-y-1/2 rounded-full bg-kot-bg"
-          />
-          <div className="mx-5 border-t border-dashed border-kot-border" />
-        </div>
-
-        <footer className="px-5 pt-4 pb-5 bg-kot-stub">
+      {/* Footer — plain & simple, no perforations */}
+      <div>
+        <div className="mx-5 border-t border-dashed border-kot-border" />
+        <footer className="px-5 pt-4 pb-5">
           {/* Stage track */}
           <ol className="flex items-center gap-2 mb-4" aria-label="Order stage">
             {STAGES.map((stage, i) => {
