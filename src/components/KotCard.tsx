@@ -205,22 +205,10 @@ export function KotCard({
         </div>
       )}
 
-      {/* NEW Footer concept: perforated ticket stub with stage track + advance CTA */}
-      <div className="relative">
-        {/* Perforation row with notches */}
-        <div className="relative">
-          <div
-            aria-hidden
-            className="absolute -left-2 top-1/2 h-4 w-4 -translate-y-1/2 rounded-full bg-kot-bg"
-          />
-          <div
-            aria-hidden
-            className="absolute -right-2 top-1/2 h-4 w-4 -translate-y-1/2 rounded-full bg-kot-bg"
-          />
-          <div className="mx-5 border-t border-dashed border-kot-border" />
-        </div>
-
-        <footer className="px-5 pt-4 pb-5 bg-kot-stub">
+      {/* Footer — plain & simple, no perforations */}
+      <div>
+        <div className="mx-5 border-t border-dashed border-kot-border" />
+        <footer className="px-5 pt-4 pb-5">
           {/* Stage track */}
           <ol className="flex items-center gap-2 mb-4" aria-label="Order stage">
             {STAGES.map((stage, i) => {
