@@ -45,11 +45,6 @@ function timerTone(sec: number) {
   return "critical";
 }
 
-const STAGES: { key: KotStatus; label: string }[] = [
-  { key: "PENDING", label: "Queued" },
-  { key: "PREPARING", label: "Cooking" },
-  { key: "SERVED", label: "Ready" },
-];
 
 export function KotCard({
   tableNo,
