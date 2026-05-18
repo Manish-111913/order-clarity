@@ -66,7 +66,10 @@ export function KotCard({
     status === "PENDING" ? "Start Cooking" : status === "PREPARING" ? "Mark Ready" : "Served";
 
   return (
-    <article className="w-full max-w-md rounded-2xl bg-kot-card shadow-kot ring-1 ring-kot-border overflow-hidden font-mono">
+    <article
+      className="w-full max-w-md rounded-2xl bg-kot-card shadow-kot ring-1 ring-kot-border overflow-hidden"
+      style={{ fontFamily: "'Roboto', system-ui, sans-serif" }}
+    >
       {/* Header — minimal: status dot · table · spacer · timer · dismiss */}
       <header className="relative px-5 pt-5 pb-4">
         <div className="flex items-center gap-3">
