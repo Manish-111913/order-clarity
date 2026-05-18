@@ -59,7 +59,7 @@ export function KotCard({
   onDismiss,
 }: KotCardProps) {
   const tone = timerTone(elapsedSeconds);
-  const stageIndex = STAGES.findIndex((s) => s.key === status);
+  
 
   const advance = status === "PENDING" ? onStart : status === "PREPARING" ? onReady : undefined;
   const ctaLabel =
