@@ -117,19 +117,6 @@ export function KotCard({
           </button>
         </div>
 
-        {/* sub-row: tiny labels aligned under their values */}
-        <div className="mt-2 flex items-center gap-3 text-[10px] uppercase tracking-[0.2em] text-kot-muted">
-          <span className="w-2" aria-hidden />
-          <span>Table</span>
-          <span className="text-kot-border">/</span>
-          <span>
-            {status === "PENDING" && "Awaiting"}
-            {status === "PREPARING" && "In progress"}
-            {status === "SERVED" && "Served"}
-          </span>
-          <span className="ml-auto mr-9">Elapsed</span>
-        </div>
-
         {/* hairline divider */}
         <div className="mt-4 h-px bg-kot-border" />
       </header>
