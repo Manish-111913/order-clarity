@@ -118,7 +118,7 @@ export function KotCard({
 
       {/* Items matrix */}
       <section className="px-5 py-4">
-        <div className="flex items-center justify-between border-b border-kot-border pb-2 mb-3">
+        <div className="flex items-center justify-between mb-3">
           <span className="text-[10px] uppercase tracking-widest text-kot-muted">
             Qty
           </span>
